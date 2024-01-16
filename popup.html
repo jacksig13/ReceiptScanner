@@ -3,28 +3,50 @@
 <html>
 <head>
   <title>Popup</title>
-  <style>
-    /* Define popup dimensions */
-    body {
-      width: 250px;
-      height: 250px;
-    }
-    /* Style the settings gear icon */
-    .settings-icon {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      cursor: pointer;
-    }
-  </style>
+  <meta charset="utf-8">
+  <link rel="stylesheet" href="styles/styles.css">
 </head>
 <body>
-  <!-- Settings gear icon -->
+  <!-- Settings gear icon 
   <div class="settings-icon" id="settings-icon">&#9881;</div>
+  -->
   <!-- Popup content goes here -->
-  <div id="popup-content">
-    <!-- Add your popup content here -->
+  <div class="popup-content" id="content-box">
+    <!-- Title Div -->
+    <div class="popup-content" id="title">
+      <h1>Receiptor</h1>
+    </div>
+
+    <!-- Menu box -->
+    <div class="popup-content" id="menu-outer-box">
+
+      <!-- Menu box view saved receipts -->
+      <div class="popup-content menu-item" id="view-receipts">
+        View Receipts
+      </div>
+
+      <!-- Menu box upload receipt -->
+      <div class="popup-content menu-item" id="upload-receipt">
+        Upload Receipt
+      </div>
+
+      <!-- Menu box settings -->
+      <div class="popup-content menu-item" id="settings">
+        Settings
+      </div>
+
+      <div class="popup-content menu-item" id="faq">
+        FAQ
+      </div>
+
   </div>
+
+  <!--- Copyright and updates -->
+  <div class="popup-content" id="footer">
+    <p>Created by <a href="https://github.com/jacksig13" target="_blank">Jack Sigmon</a></p>
+    <p>Latest update: 1/16/23</p>
+  </div>
+  
   <script src="popup.js"></script>
 </body>
 </html>
