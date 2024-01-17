@@ -42,11 +42,6 @@ function showSaveReceiptPopup() {
   yesButton.id = 'yes';
   yesButton.className = 'button';
   yesButton.textContent = 'Yes';
-  yesButton.onclick = function() {
-      console.log('Saving receipt...');
-      // Add your logic to handle the 'Yes' action
-      document.body.removeChild(modal); // Close the modal
-  };
   buttonContainer.appendChild(yesButton);
 
   // Add 'No' button
@@ -54,10 +49,6 @@ function showSaveReceiptPopup() {
   noButton.id = 'no';
   noButton.className = 'button'
   noButton.textContent = 'No';
-  noButton.onclick = function() {
-      console.log('Receipt save cancelled.');
-      document.body.removeChild(modal); // Close the modal
-  };
   buttonContainer.appendChild(noButton);
 
   // Append the modal to the body
@@ -66,6 +57,19 @@ function showSaveReceiptPopup() {
   }, 1000);
   console.log('Modal created.');
   modal.offsetHeight; // Force the browser to recalculate the modal's styles
+  setEventListeners(yesButton, noButton, modal);
+}
+
+function setEventListeners(yesButton, noButton, modal) {
+  yesButton.addEventListener('click', function() {
+    console.log('Saving receipt...');
+    // Add your logic to handle the 'Yes' action
+    document.body.removeChild(modal); // Close the modal
+  });
+  noButton.addEventListener('click', function() {
+    console.log('Receipt save cancelled.');
+    document.body.removeChild(modal); // Close the modal
+  });
 }
 
 checkForCheckoutPage();
