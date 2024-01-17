@@ -1,0 +1,62 @@
+#receiptScannerModal {
+  position: fixed;
+  width: 250px;
+  height: 100px;
+  top: 10px;
+  right: 10px;
+  background-color: lightcoral;
+  border: solid 2px #000;
+  text-align: center;
+  box-sizing: border-box;
+  z-index: 9999 !important; /* This is to make sure the modal is on top of everything else */
+}
+
+#receiptScannerModal #notification-title {
+  position: absolute;
+  height: 25%;
+  width: 100%;
+  font-size: 16px;
+  line-height: 25px;
+  font-weight: 800;
+}
+
+#receiptScannerModal #notification-message {
+  position: absolute;
+  top: 25%;
+  height: 25%;
+  width: 100%;
+  font-size: 14px;
+  line-height: 25px;
+}
+
+#receiptScannerModal #notification-buttons {
+  position: absolute;
+  top: 50%;
+  height: 50%;
+  width: 100%;
+  border-top: solid 2px #000;
+}
+
+#receiptScannerModal #notification-buttons .button:hover {
+  cursor: pointer;
+  background-color: #000;
+  color: #fff;
+}
+
+#receiptScannerModal #notification-buttons div {
+  position: absolute;
+  font-size: 20px;
+  height: 100%;
+  line-height: 50px;
+  width: 50%;
+}
+
+#receiptScannerModal #notification-buttons #yes {
+  border-right: solid 1px #000;
+  left: 0
+}
+
+#receiptScannerModal #notification-buttons #no {
+  border-left: solid 1px #000;
+  right: 0
+}
