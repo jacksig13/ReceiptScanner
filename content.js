@@ -1,11 +1,10 @@
-'Placeholder file for when content scripts are added'
 // content.js
 
 // Function to check if the current page is a 'Checkout' page
 function checkForCheckoutPage() {
   // Example: Check if the URL contains the word 'checkout'
   let bodyText = document.body.innerText.toLowerCase();
-  if (window.location.href.match(/checkout|cart|purchase|payment/i) || bodyText.includes('checkout')) {
+  if (window.location.href.match(/checkout|buy|purchase|payment/i) || bodyText.includes('checkout')) {
     // If it's a checkout page, send a message to the background script
     console.log('Checkout page detected.');
     showSaveReceiptPopup();
@@ -63,12 +62,146 @@ function showSaveReceiptPopup() {
 function setEventListeners(yesButton, noButton, modal) {
   yesButton.addEventListener('click', function() {
     console.log('Saving receipt...');
-    // Add your logic to handle the 'Yes' action
+    processCheckoutPage();
     document.body.removeChild(modal); // Close the modal
   });
   noButton.addEventListener('click', function() {
     console.log('Receipt save cancelled.');
     document.body.removeChild(modal); // Close the modal
+  });
+}
+
+function minifyString(str) {
+  return str.replace(/\s+/g, ' ').trim();
+}
+
+function processCheckoutPage() {
+  let bodyText = document.body.innerText.toLowerCase();
+  gpt_prompt = 'I would like you to parse this data from a checkout page for me. The data I want is the following: \n\n';
+  gpt_prompt += '1. Each individual item in the order, including the name, quantity, and price. \n';
+  gpt_prompt += '2. The total price of the order. \n';
+  gpt_prompt += '3. The name of the store. \n';
+  const minifiedPrompt = minifyString(bodyText);
+  gpt_prompt += minifiedPrompt;
+  console.log(gpt_prompt);
+  fetch('${SERVER_PROXY_URL', {
+      method: 'POST',
+      headers: {
+          'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+          prompt: gpt_prompt  // Replace with the actual prompt
+      })
+  })
+  .then(response => {
+      if (!response.ok) {
+          throw new Error('Network response was not ok: ' + response.statusText);
+      }
+      return response.text(); // Get the response as text first
+  })
+  .then(text => {
+      console.log("Raw response text:", text);
+      try {
+          const jsonResponse = JSON.parse(text); // Parse the text as JSON
+  
+          // Access the nested 'content' field
+          const contentData = jsonResponse.choices && jsonResponse.choices.length > 0
+              ? jsonResponse.choices[0].message.content
+              : null;
+  
+          if (contentData) {
+              // Process this content data further as needed
+              console.log("Extracted content:", contentData);
+              // For CSV conversion, you might need to parse this content string to extract structured data
+              // This parsing will depend on how you want to structure your CSV and the format of 'contentData'
+              const items = parseContentData(contentData);
+              saveReceiptData(items);
+              const csvData = convertDataToCSV(items);
+              downloadCSV(csvData, 'checkout_data.csv');
+              getReceiptData();
+          } else {
+              throw new Error('Content data not found in response');
+          }
+        } catch (error) {
+          console.error('Error parsing JSON:', error);
+          throw new Error('Error parsing JSON: ' + error.message);
+        }
+  })
+  .catch(error => console.error('Error:', error));
+}
+
+function convertDataToCSV(parsedData) {
+  const csvRows = [];
+  const headers = ['Item Name', 'Quantity', 'Price'];
+  csvRows.push(headers.join(','));
+
+  for (const item of parsedData.items) {
+      csvRows.push(`"${item.name}","${item.quantity}","${item.price}"`);
+  }
+
+  // Add total, store, and date
+  csvRows.push(`\n"Total Price","${parsedData.total}"`);
+  csvRows.push(`"Store Name","${parsedData.store}"`);
+  csvRows.push(`"Date","${parsedData.date}"`);
+
+  return csvRows.join('\n');
+}
+
+
+function downloadCSV(csvData, filename) {
+  const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function parseContentData(contentData) {
+  const items = [];
+  const itemRegex = /- Name: (.+?)\n\s+- Quantity: (\d+)\n\s+- Price: \$(\d+\.\d+)/g;
+  const totalRegex = /The total price of the order: \$(\d+\.\d+)/;
+  const storeRegex = /The name of the store: (.+)/;
+  const date = new Date().toLocaleDateString(); // Assuming the date is the current date
+  let match;
+
+  while ((match = itemRegex.exec(contentData)) !== null) {
+      items.push({
+          name: match[1].trim(),
+          quantity: match[2].trim(),
+          price: match[3].trim()
+      });
+  }
+
+  const totalMatch = totalRegex.exec(contentData);
+  const storeMatch = storeRegex.exec(contentData);
+
+  const total = totalMatch ? totalMatch[1] : "N/A";
+  const store = storeMatch ? storeMatch[1].trim() : "N/A";
+
+  return { items, total, store, date };
+}
+
+function saveReceiptData(parsedData) {
+  const key = 'receipts';
+  browser.storage.local.get([key], function(result) {
+      const receipts = result[key] ? result[key] : [];
+      receipts.push(parsedData);
+      browser.storage.local.set({[key]: receipts}, function() {
+          console.log('Receipt data saved locally.');
+      });
+  });
+}
+
+function getReceiptData() {
+  browser.storage.local.get(['receipts'], function(result) {
+      if (result.receipts) {
+          console.log('Retrieved receipt data:', result.receipts);
+          // Process or display this data as needed
+      }
   });
 }
 
