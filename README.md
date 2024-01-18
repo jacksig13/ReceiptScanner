@@ -3,7 +3,8 @@ Browser extension for scanning online receipts automatically via the 'Checkout' 
 
 ## Goals/TODO
 1) Add functionality for scanning websites for the 'Checkout' page and log items/prices and total with tax.
-    - Implement popup message asking users if they would like to save the detected receipt
+    - Implement popup message asking users if they would like to save the detected receipt (DONE)
+    - Implement functionality for parsing webpage and exporting all individual items/prices/quantities, as well as the total price, date, and seller. (DONE)
     - Implement 'Auto Log' checkbox to allow auto-saving of receipts without the popup message
 
 2) Add functionality to menu buttons 
