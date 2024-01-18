@@ -1,4 +1,5 @@
 // content.js
+import './styles/contentStyles.css';
 
 // Function to check if the current page is a 'Checkout' page
 function checkForCheckoutPage() {
@@ -63,6 +64,7 @@ function setEventListeners(yesButton, noButton, modal) {
   yesButton.addEventListener('click', function() {
     console.log('Saving receipt...');
     processCheckoutPage();
+    //getUUID(processCheckoutPage);
     document.body.removeChild(modal); // Close the modal
   });
   noButton.addEventListener('click', function() {
@@ -77,14 +79,22 @@ function minifyString(str) {
 
 function processCheckoutPage() {
   let bodyText = document.body.innerText.toLowerCase();
-  gpt_prompt = 'I would like you to parse this data from a checkout page for me. The data I want is the following: \n\n';
+  var gpt_prompt = 'I would like you to parse this data from a checkout page for me. The data I want is the following: \n\n';
   gpt_prompt += '1. Each individual item in the order, including the name, quantity, and price. \n';
   gpt_prompt += '2. The total price of the order. \n';
   gpt_prompt += '3. The name of the store. \n';
   const minifiedPrompt = minifyString(bodyText);
   gpt_prompt += minifiedPrompt;
   console.log(gpt_prompt);
-  fetch('${SERVER_PROXY_URL', {
+  // Script to get the UUID from storage for lambda function verification using DynamoDB
+  browser.storage.local.get(['extensionUUID'], function(result) {
+    if (result.extensionUUID) {
+        // Use the UUID
+        console.log('UUID:', result.extensionUUID);
+    }
+  });
+
+  fetch('${SERVER_PROXY_URL}', {
       method: 'POST',
       headers: {
           'Content-Type': 'application/json'

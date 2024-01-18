@@ -1,0 +1,28 @@
+{
+  "name": "receiptscanner",
+  "version": "1.0.0",
+  "description": "Browser extension for scanning online receipts automatically via the 'Checkout' page, and storing them in a designated folder.",
+  "main": "background.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jacksig13/ReceiptScanner.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/jacksig13/ReceiptScanner/issues"
+  },
+  "homepage": "https://github.com/jacksig13/ReceiptScanner#readme",
+  "devDependencies": {
+    "copy-webpack-plugin": "^12.0.2",
+    "css-loader": "^6.9.0",
+    "file-loader": "^6.2.0",
+    "style-loader": "^3.3.4",
+    "webpack": "^5.89.0",
+    "webpack-cli": "^5.1.4"
+  }
+}
