@@ -30,6 +30,15 @@
   line-height: 25px;
 }
 
+#receiptScannerModal #saving-message {
+  position: absolute;
+  top: 25%;
+  height: 50%;
+  width: 100%;
+  font-size: 18px;
+  line-height: 50px;
+}
+
 #receiptScannerModal #notification-buttons {
   position: absolute;
   top: 50%;

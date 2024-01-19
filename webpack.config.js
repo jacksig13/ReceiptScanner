@@ -2,7 +2,7 @@ const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 
 module.exports = {
-    entry: './content.js',  // Your main script
+    entry: './content.js',
     output: {
         path: path.resolve(__dirname, 'dist'),
         filename: 'bundle.js',
@@ -24,6 +24,8 @@ module.exports = {
             patterns: [
                 { from: './manifest.json', to: 'manifest.json' },
                 { from: './popup.html', to: 'popup.html' },
+                { from: './js', to: 'js'},
+                { from: './html', to: 'html' },
                 { from: './icons', to: 'icons' },
                 { from: './styles', to: 'styles'}
             ],

@@ -4,3 +4,6 @@ notification.html
 style.css
 api_key.txt
 config.js
+dist/
+node_modules/
+uuid_generation.js
