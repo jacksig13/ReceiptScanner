@@ -7,7 +7,6 @@ function checkForCheckoutPage() {
   // Example: Check if the URL contains the word 'checkout'
   let bodyText = document.body.innerText.toLowerCase();
   if (window.location.href.match(/checkout|buy|purchase|payment|order/i)) {
-    // If it's a checkout page, send a message to the background script
     console.log('Checkout page detected.');
     showSaveReceiptPopup();
   }

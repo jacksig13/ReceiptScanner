@@ -96,36 +96,6 @@ function parseContentData(contentData) {
   return { items, total, store, date };
 }
 
-function convertDataToCSV(parsedData) {
-  const csvRows = [];
-  const headers = ['Item Name', 'Quantity', 'Price'];
-  csvRows.push(headers.join(','));
-
-  for (const item of parsedData.items) {
-      csvRows.push(`"${item.name}","${item.quantity}","${item.price}"`);
-  }
-
-  // Add total, store, and date
-  csvRows.push(`\n"Total Price","${parsedData.total}"`);
-  csvRows.push(`"Store Name","${parsedData.store}"`);
-  csvRows.push(`"Date","${parsedData.date}"`);
-
-  return csvRows.join('\n');
-}
-
-
-function downloadCSV(csvData, filename) {
-  const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = filename;
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  URL.revokeObjectURL(url);
-}
-
 function saveReceiptDataBrowser(parsedData) {
   const key = 'receipts';
   browser.storage.local.get([key], function(result) {

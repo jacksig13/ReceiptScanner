@@ -1,5 +1,6 @@
 * {
   color: white;
+  box-sizing: border-box;
 }
 
 /* Define popup dimensions */
@@ -9,13 +10,13 @@ body {
   margin: 0px;
   padding: 0px;
   border: solid 3px #000;
+  overflow: hidden;
 }
 
 /* Style the popup content */
 .popup-content {
   font-family: cursive;
   text-align: center;
-  box-sizing: border-box;
   background-color: green;
 }
 
@@ -78,16 +79,6 @@ body {
   transform: scale(1.10); /* Slightly increase the size */
 }
 
-#receipts-container {
-  position: absolute;
-  top: 50px;
-  width: 100%;
-  height: 250px;
-  border-top: solid 5px #000;
-  overflow-x: hidden;
-  overflow-y: auto;
-}
-
 .menu-item .receipt-total {
   height: 50%;
   line-height: 25px;  
@@ -100,8 +91,79 @@ body {
 }
 
 /* Style the receipt view */
+#receipts-container {
+  position: absolute;
+  top: 50px;
+  width: 100%;
+  height: 250px;
+  border-top: solid 5px #000;
+  overflow-x: hidden;
+  overflow-y: hidden;
+}
+
+#receipts-inner-container {
+  position: absolute;
+  top: 10%;
+  width: 100%;
+  height: 80%;
+  border-top: solid 3px #000;
+  border-bottom: solid 3px #000;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
+#receipts-inner-container .receipt-preview {
+  position: absolute;
+  width: 100%;
+  height: 25%;
+  cursor: pointer;
+  background-color: darkgreen;
+}
+
+#receipts-inner-container .receipt-preview-inner {
+  position: absolute;
+  left: 12.5%;
+  width: 75%;
+  height: 100%;
+  line-height: 25px;
+  font-weight: 800;
+}
+
+#receipts-container .receipts-title {
+  position: absolute;
+  top: 0px;
+  width: 100%;
+  height: 10%;
+}
+
+#receipts-container .receipts-footer {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  height: 10%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.receipts-footer #export-text {
+  margin: 0px;
+  padding: 0px;
+  line-height: 25px;
+  font-size: 12px;
+  cursor: pointer;
+}
+
+.receipt {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+
 .receipt .receipt-item {
-  margin: 0px 10px;
+  margin: 0px 10px 10px 0px;
   text-align: left;
   font-size: 14px;
 }
