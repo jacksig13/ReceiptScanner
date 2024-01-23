@@ -168,6 +168,46 @@ body {
   font-size: 14px;
 }
 
+/* Style the login menu */
+#login-menu {
+  position: absolute;
+  top: 50px;
+  width: 100%;
+  height: 250px;
+  border-top: solid 5px #000;
+  border-bottom: solid 5px #000;
+  overflow: hidden;
+}
+
+#login-menu #register {
+  position: absolute;
+  bottom: 0px;
+  width: 100%;
+  height: 20%;
+  line-height: 48px;
+}
+
+#login-menu #register a {
+  color: white;
+}
+
+#login-menu #login-form {
+  position: absolute;
+  width: 100%;
+  height: 80%;
+}
+
+#login-form form {
+  position: absolute;
+  top: 25%;
+  width: 100%;
+  height: 50%;
+}
+
+#login-form form input {
+  background-color: black;
+}
+
 /* Style the popup view-receipts menu option */
 #view-receipts {
   top: 0%;

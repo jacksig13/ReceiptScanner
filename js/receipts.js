@@ -1,10 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
   console.log("DOM content loaded.");
-  const iframe = document.getElementById('popup-frame');
-  console.log("loading receipts...");
   
   //Back arrow functionality
   loadBackArrow();
+  //Load receipts
   loadReceipts();
 });
 
@@ -21,6 +20,7 @@ function loadBackArrow() {
   });
 }
 
+//load 'export receipts to CSV' button
 function loadExport() {
   const exportText = document.getElementById('export-text');
   exportText.addEventListener('click', function() {
@@ -34,16 +34,24 @@ function loadExport() {
   });
 }
 
-function loadReceipts() {
+//Load receipts from server
+async function loadReceipts() {
   const receiptsContainer = document.getElementById('receipts-container');
-  browser.storage.local.get('receipts', function(data) {
-      const receipts = data.receipts;
-      if (receipts && receipts.length > 0) {
-          displayReceipts(receipts, receiptsContainer);
+  console.log("Preparing to display receipts..");
+  try {
+      const serverReceipts = await handleServerLoadRequest();
+      if (serverReceipts && serverReceipts.length > 0) {
+          console.log("Receipts found on server.");
+          displayReceipts(serverReceipts, receiptsContainer);
+          // Optionally update local storage with server receipts
+          browser.storage.local.set({ 'receipts': serverReceipts });
       } else {
           receiptsContainer.textContent = 'No receipts to display';
       }
-  });
+  } catch (error) {
+      console.error('Error loading receipts from server:', error);
+      receiptsContainer.textContent = 'Error loading receipts from server';
+  }
 }
 
 function convertAllReceiptsToCSV(receipts) {
@@ -66,8 +74,6 @@ function convertAllReceiptsToCSV(receipts) {
   return csvRows.join('\n');
 }
 
-
-
 function downloadCSV(csvData, filename) {
   const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
   const url = URL.createObjectURL(blob);
@@ -81,6 +87,8 @@ function downloadCSV(csvData, filename) {
 }
 
 /*
+Displays receipt previews in receipt-container
+
 Structure:
 <div id="receipts-container">
   <div class="receipts-title">Receipts (2)</div>
@@ -156,6 +164,7 @@ function displayReceipts(receipts, container) {
   });
 }
 
+//display individual receipt page
 function displayReceipt(receipt, container) {
   container.innerHTML = '';
   container.className = 'receipt-view';
@@ -187,4 +196,69 @@ function displayReceipt(receipt, container) {
   receiptElement.appendChild(receiptStoreElement);
 
   container.appendChild(receiptElement);
+}
+
+async function loadReceiptsFromServer() {
+  try {
+    const sessionToken = await getSessionToken();
+    return new Promise((resolve, reject) => {
+      fetch('https://kcihcpi7if.execute-api.us-east-2.amazonaws.com/default/OpenAI_APIHandler', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer ' + sessionToken
+          },
+          body: JSON.stringify({
+              request: 'loadReceipts'
+          })
+      })
+      .then(response => {
+          if (!response.ok) {
+              throw new Error('Network response was not ok: ' + response.statusText);
+          }
+          return response.json(); // Expecting a JSON response
+      })
+      .then(data => {
+          console.log("Loaded receipts:", data);
+          resolve(data); // Resolve with the loaded data
+      })
+      .catch(error => {
+          console.error('Error loading receipts:', error);
+          reject(error);
+      });
+    });
+  } catch (error) {
+    console.error('Error getting session token:', error);
+  }
+}
+
+async function handleServerLoadRequest() {
+  try {
+      return await loadReceiptsFromServer();
+  } catch (error) {
+    console.error('Error during receipt saving:', error);
+    showNotification(error.message);
+    return;
+  }
+}
+
+function showNotification(message) {
+  browser.notifications.create({
+    "type": "basic",
+    "iconUrl": browser.extension.getURL("icons/icon.png"),
+    "title": "Login Status",
+    "message": message
+  });
+}
+
+async function getSessionToken() {
+  return new Promise((resolve, reject) => {
+    browser.storage.local.get(['sessionToken'], function(result) {
+      if (result.sessionToken) {
+        resolve(result.sessionToken);
+      } else {
+        reject(new Error('Session token not found'));
+      }
+    });
+  });
 }

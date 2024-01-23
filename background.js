@@ -1,37 +1,31 @@
-'Placeholder file for when background functions are added'
 // background.js
 
-/* Code deprecated for now - handled in content.js
-// Listen for messages from content.js
-browser.runtime.onMessage.addListener(
-  function(request, sender, sendResponse) {
-    if (request.action === "foundCheckoutPage") {
-        // Show a notification in Firefox
-        browser.notifications.create('checkoutNotification', {
-            type: 'basic',
-            iconUrl: 'icons/128.png', // Replace with your icon
-            title: 'Checkout Page Detected',
-            message: 'Would you like to save the receipt?',
-            buttons: [{title: 'Yes'}, {title: 'No'}],
-            priority: 2
-        }).then(notificationId => {
-            // Handle notification response here if needed
-        });
-    }
+browser.runtime.onInstalled.addListener((details) => {
+  if (details.reason === "install") {
+    console.log("This is a first install!");
+    browser.storage.local.set({'firstInstall': true });
+    // Additional actions on first install (e.g., opening a welcome page)
   }
-);
-
-// Listen for the notification button click in Firefox
-browser.notifications.onButtonClicked.addListener(function(notificationId, buttonIndex) {
-    if (notificationId === 'checkoutNotification') {
-        if (buttonIndex === 0) {
-            // User clicked 'Yes'
-            console.log('Saving receipt...');
-            // Add your receipt-saving logic here
-        } else {
-            // User clicked 'No'
-            console.log('Receipt save cancelled.');
-        }
-    }
 });
-*/
+
+// Check on startup if this is the first run after installation
+browser.runtime.onStartup.addListener(() => {
+  browser.storage.local.get('sessionToken', function(data) {
+    if(!data.sessionToken) {
+      console.log("Session token missing or expired.");
+      browser.storage.local.set({'needLogin': true});
+      //browser.tabs.create({ url: browser.runtime.getURL("./html/login.html") });
+    }
+  });
+});
+
+// Check for session token on extension startup
+browser.runtime.onStartup.addListener(() => {
+  browser.storage.local.get('sessionToken', function(data) {
+    if(data.sessionToken) {
+      // User is logged in, proceed with session token
+    } else {
+      // Prompt for login
+    }
+  });
+});
